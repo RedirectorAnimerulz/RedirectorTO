@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exporting from Animerulz.to</title>
+</head>
+<body>  
+    <script>
+        try{
+
+            let isLocalDataExported = localStorage.getItem("isLocalDataExported");
+
+            if(isLocalDataExported){
+                // window.alert(isLocalDataExported);
+                window.open('https://animerulz.pro/', "_self");
+            }
+            let localDataConvertedIntoList = localStorage.getItem("localDataConvertedIntoList");
+
+            if(localDataConvertedIntoList && localDataConvertedIntoList !== 'false'){
+                let urls =  JSON.parse(localStorage.getItem('localListData'));
+
+                let index = Number(localStorage.getItem("localListDataPresentIndex"));
+
+                // window.alert(index)
+
+                localStorage.setItem("localListDataPresentIndex", index + 1);
+
+                if(index == urls.length - 1){
+                    localStorage.setItem("isLocalDataExported", true);
+                }
+
+                window.open(urls[index], "_self");
+
+            }else{
+                //to store all the data in the urls format
+                let urls = []
+
+
+                let temp = "https://animerulz.pro/readData/?"
+                let localData = localStorage;
+
+                //for exporting continue watching data
+                for(let key in localData){
+
+                    if(key === "continueWatching"){
+                        temp += 'isContinueWatching=true&data=['
+                        let j = JSON.parse(localData[key])
+                        let counter = 0;
+                        for(let item of j){
+                            if(temp.length + JSON.stringify(item).length > 2000){
+                                temp += ']'
+                                urls.push(temp)
+                                counter = 0
+                                temp = `https://animerulz.pro/readData/?isContinueWatching=true&data=[`
+                            }
+                            if(counter === 0){
+                                temp += JSON.stringify(item);
+                                counter += 1;
+                            }else
+                                temp += "," + JSON.stringify(item);
+
+                        }
+                    }
+                }
+
+                temp += ']'
+
+                urls.push(temp);
+
+
+                //for exporting watchlist data
+                for(let key in localData){
+
+                    if(key === "watchList"){
+                        temp = 'https://animerulz.pro/readData/?isWatchList=true&data=['
+                        let j = JSON.parse(localData[key])
+                        let counter = 0;
+                        for(let item of j){
+                            if(temp.length + JSON.stringify(item).length > 2000){
+                                temp += ']'
+                                urls.push(temp)
+                                counter = 0
+                                temp = `https://animerulz.pro/readData/?isWatchList=true&data=[`
+                            }
+                            if(counter === 0){
+                                temp += JSON.stringify(item);
+                                counter += 1;
+                            }else
+                                temp += "," + JSON.stringify(item);
+                        }
+                    }
+                }
+
+                temp += ']'
+
+                urls.push(temp);
+
+                temp = 'https://animerulz.pro/readData/?';
+
+                // for exporting other data
+                for(let key in localData){
+
+                    if(key !== "watchList" && key !== "continueWatching" &&  key !== "continueWatching" && key !== "cache-sprite-plyr" && key !== "geo-location"&& key !== "clear" && key !== "getItem" && key !== "removeItem" && key !== "setItem" && key !== "key"){
+                        let temp1 = `${key}=${localData[key]}&`
+                        if(temp.length + temp1.length > 2000){
+                            urls.push(temp)
+                            temp = `https://animerulz.pro/readData/?`
+                        }
+                        temp += temp1;
+
+                    }
+                }
+
+                urls.push(temp);
+
+
+                urls[urls.length - 1] += 'isLast=true';
+
+                localStorage.setItem("localDataConvertedIntoList", true);
+                localStorage.setItem('localListData', JSON.stringify(urls));
+                localStorage.setItem("localListDataPresentIndex", 1);
+
+                // window.alert(urls[0])
+
+                window.open(urls[0], '_self');
+            }
+
+        }
+        catch{
+            localStorage.setItem("isLocalDataExported", true)
+            window.open('https://animerulz.pro/', '_self');
+        }
+    </script>
+    <p>Importing Data...</p>
+    <p>This Might take a while don't press any key or don't press back.</p>
+</body>
+</html>
